@@ -26,8 +26,8 @@ functions:
           path: words
           method: post
           cors: true
-  delete:
-    handler: handler.delete
+  delet:
+    handler: handler.delet
     events:
       - http:
           path: words/{id}
