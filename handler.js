@@ -1,7 +1,7 @@
 'use strict';
 const dynamo = require('./src/dynamo');
 let params = {
-	TableName: 'words-local'
+	TableName: 'words'
 }
 const list = require('./src/handlers/list')
 const getHandler = require('./src/handlers/get')

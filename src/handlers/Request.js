@@ -2,7 +2,7 @@ const dynamo = require('../dynamo');
 
 class Request {
 	defaultParams() {
-		return { TableName: 'words-local' }
+		return { TableName: 'words' }
 	}
 
 	modifiedParams(params) {

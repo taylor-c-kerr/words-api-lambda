@@ -1,9 +1,20 @@
 service: words-api
 provider:
   name: aws
-  runtime: nodejs12.x
+  # role: arn:aws:iam::579729426660:role/LambdaDynamoAPIRole
+  runtime: nodejs10.x
   stage: dev
   region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "*"
 functions:
   list:
     handler: handler.list
@@ -53,14 +64,14 @@ custom:
     seed:
       domain:
         sources:
-          - table: words-local
+          - table: words
             sources: [./seed-data.json]
 resources:
   Resources:
-    words-local:
+    words:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: words-local
+        TableName: words
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
