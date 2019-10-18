@@ -6,7 +6,8 @@ const list = async () => {
 	const response = {
 		statusCode: 200,
 		headers: {
-			'x-custom-header': 'My header value'
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Credentials': true
 		},
 		body: JSON.stringify(dynamoResponse)
 	}

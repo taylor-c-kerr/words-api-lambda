@@ -6,7 +6,8 @@ module.exports = async (id) => {
 	const response = {
 		statusCode: 202,
 		headers: {
-			'x-custom-header': 'My header value'
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Credentials': true
 		},
 		body: JSON.stringify({msg: 'item updated', id: id})
 	}

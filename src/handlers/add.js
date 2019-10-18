@@ -6,7 +6,8 @@ const add = async (word) => {
 	const response = {
 		statusCode: 201,
 		headers: {
-			'x-custom-header': 'My header value'
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Credentials': true
 		},
 		body: JSON.stringify(word)
 	}
