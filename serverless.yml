@@ -1,7 +1,6 @@
 service: words-api
 provider:
   name: aws
-  # role: arn:aws:iam::579729426660:role/LambdaDynamoAPIRole
   runtime: nodejs10.x
   stage: dev
   region: us-east-1
