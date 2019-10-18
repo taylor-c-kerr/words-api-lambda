@@ -54,6 +54,7 @@ functions:
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-domain-manager
 custom:
   dynamodb:
     stages:
@@ -66,6 +67,10 @@ custom:
         sources:
           - table: words
             sources: [./seed-data.json]
+  customDomain:
+    domainName: api.thoughtfulmoose.com
+    basePath: ''
+    certificateName: 'api.thoughtfulmoose.com'
 resources:
   Resources:
     words:
