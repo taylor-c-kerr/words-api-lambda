@@ -67,9 +67,9 @@ custom:
           - table: words
             sources: [./seed-data.json]
   customDomain:
-    domainName: api.thoughtfulmoose.com
+    domainName: ${file(./secrets.yml):domain.name}
     basePath: ''
-    certificateName: 'api.thoughtfulmoose.com'
+    certificateName: ${file(./secrets.yml):domain.name}
 resources:
   Resources:
     words:
