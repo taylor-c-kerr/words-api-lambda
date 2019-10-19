@@ -7,5 +7,8 @@ This API is a serverless API using AWS Lambda and API Gateway.  It is developed 
 - Install dynamodb-local by running `sls dynamodb install`
 - To start the local API Gateway and DynamoDb, run `serverless offline start`
 
+## Deployment
+Run `serverless deploy`
+
 ## Notes
 The serverless framework uses lambda proxy by default, so API gatewasy expects the response from the lambda function to include statusCode, headers, and body.  The body must be stringified.
