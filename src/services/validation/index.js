@@ -12,7 +12,6 @@ class Validate {
 		}
 
 		// name should be a string
-		// tested
 		if (!this.isString(name)) {
 			let error = [...validated.error];
 			error.push('Name is not a string.')
@@ -23,7 +22,6 @@ class Validate {
 		}
 
 		// if id is not provided or is improper, create a proper one
-		// tested
 		if (!id || !this.isGuid(id)) {
 			id = uuidv4();
 			let warning = [...validated.warning]
@@ -33,7 +31,6 @@ class Validate {
 		}
 
 		// category should be an array
-		// tested
 		if (!this.isArray(category)) {
 			let error = [...validated.error];
 			error.push('Category must be an array.');
@@ -44,7 +41,6 @@ class Validate {
 		}
 
 		// items in category should be strings
-		// tested
 		if (!this.arrayOnlyContains(category, 'string')) {
 			let error = [...validated.error];
 			error.push('Categories must be strings.');
@@ -55,7 +51,6 @@ class Validate {
 		}
 
 		// definition should be an array
-		// tested
 		if (!this.isArray(definition)) {
 			let error = [...validated.error];
 			error.push('Definition must be an array.');
@@ -66,7 +61,6 @@ class Validate {
 		}
 
 		// definitions should be an array of objects
-		// tested
 		if (definition && !this.arrayOnlyContains(definition, 'object')) {
 			let error = [...validated.error];
 			error.push('Definitions must be objects.');
@@ -77,7 +71,6 @@ class Validate {
 		}
 		else {
 			// definition.partofspeech exists and should be a string
-			// tested
 			if (definition && !definition.every(d => d.partOfSpeech || this.isString(d.partOfSpeech))) {
 				let error = [...validated.error];
 				error.push('Part of speech must be a string.')
@@ -87,7 +80,6 @@ class Validate {
 				}
 			}
 			// def.entries should be an array
-			// tested
 			if (definition && !definition.every(d => d.entries && this.isArray(d.entries))) {
 				let error = [...validated.error];
 				error.push('Entries must be an array.');
@@ -97,7 +89,6 @@ class Validate {
 				}
 			}
 			// def.entries should be an array of strings
-			// tested
 			if (definition && !definition.every(d => this.arrayOnlyContains(d.entries, 'string'))) {
 				let error = [...validated.error];
 				error.push('Entries must be strings.');
@@ -156,24 +147,5 @@ class Validate {
 		});
 	}
 }
-
-
-/*
-{
-  "id": "271be13b-e95d-48b2-96b6-a3e842328864",
-  "name": "sly",
-  "category": [
-    "adjective"
-  ],
-  "definition": [
-    {
-      "partOfSpeech": "adjective",
-      "entries": [
-        "sneaky"
-      ]
-    }
-  ]
-}
-*/
 
 module.exports = new Validate();
