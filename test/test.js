@@ -306,7 +306,7 @@ describe('Validate', function() {
 		})
 	})
 	describe('word(word)', function() {
-		it('should validate and have no warnings', function(done) {
+		it('should validate and have no warnings', async function() {
 			let validWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -323,12 +323,11 @@ describe('Validate', function() {
 				]
 			}
 
-			const result = Validate.word(validWord);
+			const result = await Validate.word(validWord);
 			result.valid.should.equal(true);
-			done();
 		})
 		
-		it('should validate but have a warning', function(done) {
+		it('should validate but have a warning', async function() {
 			let validWordWithInvalidId = {
 				"id": "271be13z-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -345,14 +344,13 @@ describe('Validate', function() {
 				]
 			}
 
-			const result = Validate.word(validWordWithInvalidId);
+			const result = await Validate.word(validWordWithInvalidId);
 			result.valid.should.equal(true);
 			result.warning.should.not.be.empty;
 			result.warning[0].should.contain('Improper ID.  A proper one was created for you');
-			done();
 		})
 
-		it('should not valid a word without a category', function(done) {
+		it('should not valid a word without a category', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -366,14 +364,13 @@ describe('Validate', function() {
 				]
 			}
 
-			const result = Validate.word(invalidWord);
+			const result = await Validate.word(invalidWord);
 			result.valid.should.equal(false);
 			result.error.should.not.be.empty;
 			result.error[0].should.equal('Category must be an array.');
-			done();
 		})
 
-		it('should not valid a word with an improper category', function(done) {
+		it('should not valid a word with an improper category', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -390,43 +387,42 @@ describe('Validate', function() {
 
 			let {category} = invalidWord;
 
-			const result1 = Validate.word(invalidWord);
+			const result1 = await Validate.word(invalidWord);
 			result1.valid.should.equal(false);
 			result1.error.should.not.be.empty;
 			result1.error[0].should.equal('Categories must be strings.');
 
 			// undefined
 			category[0] = undefined;
-			const result2 = Validate.word(invalidWord);
+			const result2 = await Validate.word(invalidWord);
 			result2.valid.should.equal(false);
 			result2.error.should.not.be.empty;
 			result2.error[0].should.equal('Categories must be strings.');
 
 			// null
 			category[0] = null;
-			const result3 = Validate.word(invalidWord);
+			const result3 = await Validate.word(invalidWord);
 			result3.valid.should.equal(false);
 			result3.error.should.not.be.empty;
 			result3.error[0].should.equal('Categories must be strings.');
 
 			// array
 			category[0] = ['arrays'];
-			const result4 = Validate.word(invalidWord);
+			const result4 = await Validate.word(invalidWord);
 			result4.valid.should.equal(false);
 			result4.error.should.not.be.empty;
 			result4.error[0].should.equal('Categories must be strings.');
 
 			// object
 			category[0] = {a: 'string'};
-			const result5 = Validate.word(invalidWord);
+			const result5 = await Validate.word(invalidWord);
 			result5.valid.should.equal(false);
 			result5.error.should.not.be.empty;
 			result5.error[0].should.equal('Categories must be strings.');
 
-			done();
 		})
 
-		it('should not valid a word with an empty category', function(done) {
+		it('should not valid a word with an empty category', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -441,14 +437,13 @@ describe('Validate', function() {
 				]
 			}
 
-			const result = Validate.word(invalidWord);
+			const result = await Validate.word(invalidWord);
 			result.valid.should.equal(false);
 			result.error.should.not.be.empty;
 			result.error[0].should.equal('Category must be an array.');
-			done();
 		})
 
-		it('should not valid a word with an empty definition', function(done) {
+		it('should not valid a word with an empty definition', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -458,14 +453,13 @@ describe('Validate', function() {
 				"definition": []
 			}
 
-			const result = Validate.word(invalidWord);
+			const result = await Validate.word(invalidWord);
 			result.valid.should.equal(false);
 			result.error.should.not.be.empty;
 			result.error[0].should.equal('Definition must be an array.');
-			done();
 		})
 
-		it('should not valid a word with an improper definition', function(done) {
+		it('should not valid a word with an improper definition', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -475,43 +469,41 @@ describe('Validate', function() {
 
 			let {definition} = invalidWord;
 
-			const result1 = Validate.word(invalidWord);
+			const result1 = await Validate.word(invalidWord);
 			result1.valid.should.equal(false);
 			result1.error.should.not.be.empty;
 			result1.error[0].should.equal('Definitions must be objects.');
 
 			// undefined
 			definition[0] = undefined
-			const result2 = Validate.word(invalidWord);
+			const result2 = await Validate.word(invalidWord);
 			result2.valid.should.equal(false);
 			result2.error.should.not.be.empty;
 			result2.error[0].should.equal('Definitions must be objects.');
 
 			// null
 			definition[0] = null
-			const result3 = Validate.word(invalidWord);
+			const result3 = await Validate.word(invalidWord);
 			result3.valid.should.equal(false);
 			result3.error.should.not.be.empty;
 			result3.error[0].should.equal('Definitions must be objects.');
 
 			// array
 			definition[0] = ['arrays']
-			const result4 = Validate.word(invalidWord);
+			const result4 = await Validate.word(invalidWord);
 			result4.valid.should.equal(false);
 			result4.error.should.not.be.empty;
 			result4.error[0].should.equal('Definitions must be objects.');
 
 			// string
 			definition[0] = 'stringy'
-			const result5 = Validate.word(invalidWord);
+			const result5 = await Validate.word(invalidWord);
 			result5.valid.should.equal(false);
 			result5.error.should.not.be.empty;
 			result5.error[0].should.equal('Definitions must be objects.');
-
-			done();
 		})
 		
-		it('should not valid a word without a definition', function(done) {
+		it('should not valid a word without a definition', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -520,14 +512,13 @@ describe('Validate', function() {
 				]
 			}
 
-			const result = Validate.word(invalidWord);
+			const result = await Validate.word(invalidWord);
 			result.valid.should.equal(false);
 			result.error.should.not.be.empty;
 			result.error[0].should.equal('Definition must be an array.');
-			done();
 		})
 
-		it('should not validate an invalid definition object', function(done) {
+		it('should not validate an invalid definition object', async function() {
 			let invalidWord = {
 				"id": "271be13b-e95d-48b2-96b6-a3e842328864",
 				"name": "sly",
@@ -535,7 +526,7 @@ describe('Validate', function() {
 				"definition": [{"entries": ["sneaky"]}]
 			}
 
-			const result1 = Validate.word(invalidWord);
+			const result1 = await Validate.word(invalidWord);
 			result1.valid.should.equal(false);
 			result1.error.should.not.be.empty;
 			result1.error[0].should.equal('Part of speech must be a string.');
@@ -548,14 +539,12 @@ describe('Validate', function() {
 				"definition": [{"partOfSpeech": "adjective"}]
 			}
 
-			const result2 = Validate.word(invalidWord);
+			const result2 = await Validate.word(invalidWord);
 			result2.valid.should.equal(false);
 			result2.error.should.not.be.empty;
 			result2.error[0].should.equal('Entries must be an array.');
 			result2.error[1].should.equal('Entries must be strings.');
 			result2.error.should.have.lengthOf(2);
-
-			done();
 		})
 	})
 });
