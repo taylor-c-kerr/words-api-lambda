@@ -1,6 +1,10 @@
 const Request = require('./Request')
 const request = new Request();
 
+/**
+ * @param {object} word The validated word to be added to the database
+ * @returns {object} response The data to be used in the server's response
+*/
 const add = async (word) => {
 	let warning = word.warning;
 	word = word.word;

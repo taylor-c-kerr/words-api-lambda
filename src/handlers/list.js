@@ -1,6 +1,9 @@
 const Request = require('./Request')
 const request = new Request();
 
+/**
+ * @returns {object} response The data, including all the data from the db, to be used in the server's response
+*/
 const list = async () => {
 	const dynamoResponse = await request.list();
 	const response = {

@@ -1,6 +1,11 @@
 const Request = require('./Request')
 const request = new Request();
 
+/**
+ * @param {string} id The id of the word to be updated
+ * @param {object} word The data to be updated
+ * @returns {object} response The data to be used in the server's response
+*/
 const update = async (id, word) => {
 	const exists = await request.get(id);
     if (!exists.Item) {
