@@ -1,5 +1,4 @@
 'use strict';
-const dynamo = require('./src/dynamo');
 const Validate = require('./src/services/validation/index');
 
 let params = {

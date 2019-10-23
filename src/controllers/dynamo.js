@@ -6,10 +6,10 @@ let options = {}
 // sets the local variables to test locally instead of using the real resources
 if (profile === 'offline') {
 	options = {
-    region: 'localhost',
-    endpoint: 'http://localhost:8000', 
-    accessKeyId: 'DEFAULT_ACCESS_KEY', 
-    secretAccessKey: 'DEFAULT_SECRET'
+		region: 'localhost',
+		endpoint: 'http://localhost:8000', 
+		accessKeyId: 'DEFAULT_ACCESS_KEY', 
+		secretAccessKey: 'DEFAULT_SECRET'
 	}
 }
 

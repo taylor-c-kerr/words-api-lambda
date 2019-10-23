@@ -2,3 +2,4 @@
 /node_modules
 /.serverless
 secrets.yml
+seed-data.json
