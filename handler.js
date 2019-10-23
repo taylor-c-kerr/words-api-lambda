@@ -1,5 +1,7 @@
 'use strict';
 const dynamo = require('./src/dynamo');
+const Validate = require('./src/services/validation/index');
+
 let params = {
 	TableName: 'words'
 }
@@ -18,12 +20,14 @@ const get = async (event) => {
 const add = async (event) => {
   let { body } = event;
   body = JSON.parse(body);
-  params.Item = body;
+  // params.Item = body; // what is this?
+  body = await Validate.word(body);
+  // console.log(body);
 
-  // TODO refactor validation
-  if (!body.id || !body.name) {
-    return {statusCode: 400, body: JSON.stringify({msg: 'bad request'})}
+  if (!body.valid) {
+    return {statusCode: 400, body: JSON.stringify({msg: 'bad request', error: body.error})}
   }
+  
   return await addHandler(body);
 }
 

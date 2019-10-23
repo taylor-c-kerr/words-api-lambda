@@ -1,13 +1,14 @@
 const uuidv4 = require('uuid/v4')
 
 class Validate {
-	word(word) {
+	async word(word) {
 		let {name, id, category, definition} = word;
 
 		let validated = {
 			valid: true,
 			error: [],
-			warning: []
+			warning: [],
+			word: word
 		}
 
 		// name should be a string
@@ -28,6 +29,7 @@ class Validate {
 			let warning = [...validated.warning]
 			warning.push(`Improper ID.  A proper one was created for you: ${id}.`);
 			validated.warning = warning;
+			validated.word.id = id;
 		}
 
 		// category should be an array
