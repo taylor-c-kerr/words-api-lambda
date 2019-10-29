@@ -2,7 +2,7 @@ const uuidv4 = require('uuid/v4')
 
 class Validate {
 	async word(word) {
-		let {name, id, category, definition} = word;
+		const {name, id, category, definition} = word;
 
 		let validated = {
 			valid: true,
@@ -15,16 +15,17 @@ class Validate {
 		if (!this.isString(name)) {
 			let error = [...validated.error];
 			error.push('Name is not a string.')
-			validated = {
+			const validation = {
 				valid: false,
 				error: error
 			}
+			validated = Object.assign(validated, validation)
 		}
 
 		// if id is not provided or is improper, create a proper one
 		if (!id || !this.isGuid(id)) {
-			id = uuidv4();
-			let warning = [...validated.warning]
+			let warning = [...validated.warning];
+			let id = uuidv4();
 			warning.push(`Improper ID.  A proper one was created for you: ${id}.`);
 			validated.warning = warning;
 			validated.word.id = id;

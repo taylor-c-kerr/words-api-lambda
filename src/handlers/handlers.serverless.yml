@@ -1,0 +1,35 @@
+list:
+  handler: ./src/handlers/src/list.handler
+  events:
+    - http:
+        path: words
+        method: get
+        cors: true
+get:
+  handler: ./src/handlers/src/get.handler
+  events:
+    - http:
+        path: words/{id}
+        method: get
+        cors: true
+add:
+  handler: ./src/handlers/src/add.handler
+  events:
+    - http:
+        path: words
+        method: post
+        cors: true
+delete:
+  handler: ./src/handlers/src/delete.handler
+  events:
+    - http:
+        path: words/{id}
+        method: delete
+        cors: true
+update:
+  handler: ./src/handlers/src/update.handler
+  events:
+    - http:
+        path: words/{id}
+        method: put
+        cors: true
