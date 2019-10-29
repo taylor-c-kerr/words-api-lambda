@@ -1,11 +1,14 @@
-const Request = require('../controllers/Request');
+const Request = require('../../controllers/Request');
 const request = new Request();
 
 /**
  * @param {string} id The id of the word to be retrieved from the database
  * @returns {object} response The data to be used in the server's response
 */
-const get = async (id) => {
+const get = async (event) => {
+	const { pathParameters } = event;
+	const { id } = pathParameters;
+
 	const word = await request.get(id);
 	const response = {
 		statusCode: 200,
@@ -21,4 +24,4 @@ const get = async (id) => {
 	return response;
 
 }
-module.exports = get;
+exports.handler = get;

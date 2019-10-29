@@ -3,3 +3,4 @@
 /.serverless
 secrets.yml
 seed-data.json
+.DS_Store

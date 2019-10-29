@@ -1,10 +1,10 @@
-const Request = require('../controllers/Request');
+const Request = require('../../controllers/Request');
 const request = new Request();
 
 /**
  * @returns {object} response The data, including all the data from the db, to be used in the server's response
 */
-const list = async () => {
+const list = async (event) => {
 	const dynamoResponse = await request.list();
 	const response = {
 		statusCode: 200,
@@ -17,4 +17,4 @@ const list = async () => {
 	return response;
 
 }
-module.exports = list;
+exports.handler = list;

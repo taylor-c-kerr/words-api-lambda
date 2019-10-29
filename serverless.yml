@@ -15,41 +15,7 @@ provider:
         - dynamodb:DeleteItem
       Resource: "*"
 functions:
-  list:
-    handler: handler.list
-    events:
-      - http:
-          path: words
-          method: get
-          cors: true
-  get:
-    handler: handler.get
-    events:
-      - http:
-          path: words/{id}
-          method: get
-          cors: true
-  add:
-    handler: handler.add
-    events:
-      - http:
-          path: words
-          method: post
-          cors: true
-  delet:
-    handler: handler.delet
-    events:
-      - http:
-          path: words/{id}
-          method: delete
-          cors: true
-  update:
-    handler: handler.update
-    events:
-      - http:
-          path: words/{id}
-          method: put
-          cors: true
+  - ${file(./src/handlers/handlers.serverless.yml)}
 plugins:
   - serverless-dynamodb-local
   - serverless-offline

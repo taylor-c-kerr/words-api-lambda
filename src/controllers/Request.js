@@ -71,9 +71,10 @@ class Request {
 	 * @param {object} word The data to be updated
 	 * @returns
 	*/
-	async update(id, word) {
+	async update(word) {
+		const {id} = word;
 		let params = this.defaultParams();
-		params = this.modifiedParams({Item: word/*, Key: {id: id}*/});
+		params = this.modifiedParams({Item: word, Key: {id: id}});
 		const response = await dynamo.put(params).promise();
 		return response;
 	}
