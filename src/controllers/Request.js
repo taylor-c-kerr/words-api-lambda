@@ -34,6 +34,7 @@ class Request {
 	}
 
 	/**
+	 * Gets a specific item from db
 	 * @param {string} id The unique ID of an item from the db
 	 * @returns {object} The item from the db
 	*/
@@ -45,6 +46,7 @@ class Request {
 	}
 
 	/**
+	 * Adds a new word to db
 	 * @param {object} The validated word to be added to the db
 	 * @returns {object} Confirmation of the word added to the db
 	*/
@@ -56,6 +58,7 @@ class Request {
 	}
 
 	/**
+	 * Deletes a specific word to db
 	 * @param {string} id The unique ID of an item to be deleted from the db
 	 * @returns {object} Confirmation of the word deleted from the db
 	*/
@@ -67,6 +70,7 @@ class Request {
 	}
 
 	/**
+	 * Updates a word to db
 	 * @param {string} id The unique ID of an item to be updated
 	 * @param {object} word The data to be updated
 	 * @returns
