@@ -30,6 +30,8 @@ describe('Validate', function() {
 			let b = true;
 			let n = null;
 			let u;
+			let e = [];
+			let es = [''];
 
 			let validateS = Validate.isArray(s);
 			let validateO = Validate.isArray(o);
@@ -37,6 +39,8 @@ describe('Validate', function() {
 			let validateB = Validate.isArray(b);
 			let validateN = Validate.isArray(n);
 			let validateU = Validate.isArray(u);
+			let validateE = Validate.isArray(e);
+			let validateES = Validate.isArray(es);
 
 			validateS.should.equal(false);
 			validateO.should.equal(false);
@@ -44,6 +48,8 @@ describe('Validate', function() {
 			validateB.should.equal(false);
 			validateN.should.equal(false);
 			validateU.should.equal(false);
+			validateE.should.equal(false);
+			validateES.should.equal(false);
 
 			done();
 		})

@@ -108,8 +108,24 @@ class Validate {
 		return id.match(regex);
 	}
 
+	isArrayProper(a) {
+		const isImproper = a.filter(aa => aa === '').length;
+		return !isImproper;
+	}
+
 	isArray(a) {
-		return Array.isArray(a) && a.length > 0;
+		try {
+			const isProper = a.length > 0 && this.isArrayProper(a);
+			return Array.isArray(a) && isProper;
+		}
+		catch (error) {
+			if (error.message === 'a.filter is not a function' || error.message.includes(`Cannot read property 'length'`)) {
+				return false;
+			}
+			else {
+				throw error;
+			}
+		}
 	}
 
 	isString(s) {
@@ -146,6 +162,10 @@ class Validate {
 
 			return typeof a === itemType && !this.isArray(a);
 		});
+	}
+
+	isEmptyString(s) {
+		return s === '';
 	}
 }
 
