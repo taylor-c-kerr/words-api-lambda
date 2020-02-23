@@ -9,16 +9,26 @@ const request = new Request();
 const add = async (event) => {
 	let {body} = event;
 	body = JSON.parse(body);
-	const validatedWord = await Validate.word(body);
-	const {valid, error, warning, word} = validatedWord;
+
 	let response = {
 		statusCode: null,
 		headers: {
 			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Credentials': true
+			'Access-Control-Allow-Credentials': true,
 		},
-		body: null
-	}
+		body: null,
+	};
+
+	const exists = request.get(body.id);
+	if (exists) {
+		response.statusCode = 400;
+		response.body = JSON.stringify({message: 'bad request', error: 'Word already exists.'});
+
+		return response;
+	};
+
+	const validatedWord = await Validate.word(body);
+	const {valid, error, warning, word} = validatedWord;
 
 	if (!valid) {
 		response.statusCode = 400;
