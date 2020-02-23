@@ -40,19 +40,19 @@ class Request {
 	*/
 	async get(id) {
 		let params = this.defaultParams();
-		params = this.modifiedParams({Key: {id: id}})
+		params = this.modifiedParams({Key: {id: id}});
 		const response = await dynamo.get(params).promise();
 		return response;
 	}
 
 	/**
 	 * Adds a new word to db
-	 * @param {object} The validated word to be added to the db
+	 * @param {object} word The validated word to be added to the db
 	 * @returns {object} Confirmation of the word added to the db
 	*/
 	async add(word) {
 		let params = this.defaultParams();
-		params = this.modifiedParams({Item: word})
+		params = this.modifiedParams({Item: word});
 		const response = await dynamo.put(params).promise();
 		return response;
 	}
@@ -64,7 +64,7 @@ class Request {
 	*/
 	async delete(id) {
 		let params = this.defaultParams();
-		params = this.modifiedParams({Key: {id: id}})
+		params = this.modifiedParams({Key: {id: id}});
 		const response = await dynamo.delete(params).promise();
 		return response;
 	}
