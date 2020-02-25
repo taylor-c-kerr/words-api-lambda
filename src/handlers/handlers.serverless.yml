@@ -5,6 +5,10 @@ list:
         path: words
         method: get
         cors: true
+        request:
+          parameters:
+            querystrings:
+              name: false
 get:
   handler: ./src/handlers/src/get.handler
   events:
