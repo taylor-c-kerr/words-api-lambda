@@ -25,12 +25,18 @@ class Request {
 
 	/**
 	 * Retrieves all items from db
+	 * @param options Filters to apply to the result
 	 * @returns {object} All the items from the db
 	*/
-	async list() {
+	async list(options = {}) {
 		let params = this.defaultParams();
 		const response = await dynamo.scan(params).promise();
-		return response.Items;
+		const items = response.Items;
+
+		if (options.name) {
+			return items.filter(item => item.name === options.name)
+		}
+		return items;
 	}
 
 	/**

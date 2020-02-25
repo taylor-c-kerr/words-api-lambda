@@ -1,6 +1,24 @@
 const Validate = require('../../services/validation/index');
 const Request = require('../../controllers/Request');
 const request = new Request();
+const _ = require('lodash');
+
+/**
+ * @param {object} word
+ * @returns {boolean}
+*/
+const isAlreadyAdded = async (word) => {
+	const {id, name} = word;
+
+	const idExists = await request.get(id);
+	if (!_.isEmpty(idExists)) {
+		return true;
+	}
+
+	const allWords = await request.list({name});;
+	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
+	return nameExists.length > 0;
+}
 
 /**
  * @param {object} word The validated word to be added to the database
@@ -19,7 +37,7 @@ const add = async (event) => {
 		body: null,
 	};
 
-	const exists = request.get(body.id);
+	const exists = await isAlreadyAdded(body);
 	if (exists) {
 		response.statusCode = 400;
 		response.body = JSON.stringify({message: 'bad request', error: 'Word already exists.'});
