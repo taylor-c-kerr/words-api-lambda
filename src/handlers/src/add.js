@@ -1,4 +1,5 @@
-const Validate = require('../../services/validation/index');
+const Validate = require('../../services/validation');
+const format = require('../../services/formatter');
 const Request = require('../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
@@ -46,14 +47,15 @@ const add = async (event) => {
 	};
 
 	const validatedWord = await Validate.word(body);
-	const {valid, error, warning, word} = validatedWord;
+	let {valid, error, warning, word} = validatedWord;
 
 	if (!valid) {
 		response.statusCode = 400;
 		response.body = JSON.stringify({message: 'bad request', error: error});
 	}
 	else {
-		const result = await request.add(word);
+		word = format(word);
+		await request.add(word);
 		response.statusCode = 201;
 		response.body = JSON.stringify({word: word, warning: warning});
 	}

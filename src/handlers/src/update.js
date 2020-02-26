@@ -1,3 +1,4 @@
+const format = require('../../services/formatter');
 const Request = require('../../controllers/Request');
 const request = new Request();
 
@@ -25,6 +26,7 @@ const update = async (event) => {
       return {statusCode: 400, body: JSON.stringify({msg: 'bad request'})}
     }
 
+	word = format(word);
 	await request.update(word);
 
 	const response = {
