@@ -26,41 +26,53 @@ const isAlreadyAdded = async (word) => {
  * @returns {object} response The data to be used in the server's response
 */
 const add = async (event) => {
-	let {body} = event;
-	body = JSON.parse(body);
-
-	let response = {
-		statusCode: null,
-		headers: {
-			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Credentials': true,
-		},
-		body: null,
-	};
-
-	const exists = await isAlreadyAdded(body);
-	if (exists) {
-		response.statusCode = 400;
-		response.body = JSON.stringify({message: 'bad request', error: 'Word already exists.'});
-
+	try {
+		let {body} = event;
+		body = JSON.parse(body);
+	
+		let response = {
+			statusCode: null,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Credentials': true,
+			},
+			body: null,
+		};
+	
+		const exists = await isAlreadyAdded(body);
+		if (exists) {
+			response.statusCode = 400;
+			response.body = JSON.stringify({message: 'bad request', error: 'Word already exists.'});
+	
+			return response;
+		};
+	
+		const validatedWord = await Validate.word(body);
+		let {valid, error, warning, word} = validatedWord;
+	
+		if (!valid) {
+			response.statusCode = 400;
+			response.body = JSON.stringify({message: 'bad request', error: error});
+		}
+		else {
+			word = format(word);
+			await request.add(word);
+			response.statusCode = 201;
+			response.body = JSON.stringify({word: word, warning: warning});
+		}
+	
 		return response;
-	};
-
-	const validatedWord = await Validate.word(body);
-	let {valid, error, warning, word} = validatedWord;
-
-	if (!valid) {
-		response.statusCode = 400;
-		response.body = JSON.stringify({message: 'bad request', error: error});
 	}
-	else {
-		word = format(word);
-		await request.add(word);
-		response.statusCode = 201;
-		response.body = JSON.stringify({word: word, warning: warning});
+	catch (error) {
+		return {
+			statusCode: 500,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Credentials': true,
+			},
+			body: JSON.stringify({msg: 'error', error: error.message}),
+		}
 	}
-
-	return response;
 
 }
 

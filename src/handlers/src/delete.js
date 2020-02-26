@@ -6,21 +6,33 @@ const request = new Request();
  * @returns {object} response The data to be used in the server's response
 */
 exports.handler = async (event) => {
-	const { pathParameters } = event;
-	const { id } = pathParameters;
-
-	if (!id) {
-	  return {statusCode: 400, body: JSON.stringify({message: 'bad request'})}
+	try {
+		const { pathParameters } = event;
+		const { id } = pathParameters;
+	
+		if (!id) {
+		  return {statusCode: 400, body: JSON.stringify({message: 'bad request'})}
+		}
+	
+		await request.delete(id);
+		const response = {
+			statusCode: 202,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Credentials': true
+			},
+			body: JSON.stringify({msg: 'item deleted', id: id})
+		}
+		return response;	
 	}
-
-	await request.delete(id);
-	const response = {
-		statusCode: 202,
-		headers: {
-			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Credentials': true
-		},
-		body: JSON.stringify({msg: 'item deleted', id: id})
+	catch(error) {
+		return {
+			statusCode: 500,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Credentials': true,
+			},
+			body: JSON.stringify({msg: 'error', error: error.message}),
+		}
 	}
-	return response;
 }
