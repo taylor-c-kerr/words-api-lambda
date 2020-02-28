@@ -1,44 +1,73 @@
 const format = require('../../services/formatter');
 const Request = require('../../controllers/Request');
 const request = new Request();
+const _ = require('lodash');
+const Validate = require('../../services/validation');
 
 /**
  * @param {string} id The id of the word to be updated
  * @param {object} word The data to be updated
  * @returns {object} response The data to be used in the server's response
 */
+const isAlreadyAdded = async (word) => {
+	const {id, name} = word;
+	let message;
+
+	const idExists = await request.get(id);
+	if (!_.isEmpty(idExists)) {
+		message = 'ID already exists';
+	}
+
+	const allWords = await request.list({name});;
+	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
+	message = nameExists.length > 0 ? 'Name already exists' : '';
+	return {message, data: nameExists};
+}
+
 const update = async (event) => {
 	try {
-		const { body, pathParameters } = event;
+		const { pathParameters } = event;
+		let { body } = event;
 		const { id } = pathParameters;
-		let word = JSON.parse(body);
+		body = JSON.parse(body);
 	
-		if (!word.id) {
-			word.id = id;
+		if (!body.id) {
+			body.id = id;
 		}
 	
-		const exists = await request.get(id);
+		const exists = await isAlreadyAdded(body);
 	
-		if (!exists.Item) {
-		  return {statusCode: 404, body: JSON.stringify({msg: 'resource not found'})}
+		if (!exists) {
+		  return {statusCode: 404, body: JSON.stringify({message: 'Resource not found.'})}
 		}
 	
-		if (exists.Item.id !== word.id) {
-		  return {statusCode: 400, body: JSON.stringify({msg: 'bad request'})}
+		if (exists.data[0].id !== body.id) {
+		  return {statusCode: 400, body: JSON.stringify({message: `ID's dont match`})}
 		}
 	
-		word = format(word);
-		await request.update(word);
-	
-		const response = {
-			statusCode: 200,
+		let response = {
+			statusCode: null,
 			headers: {
 				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true
+				'Access-Control-Allow-Credentials': true,
 			},
-			body: JSON.stringify(word)
+			body: null,
+		};
+
+		body = format(body);
+		const validatedWord = await Validate.word(body);
+		let {valid, error, warning, word} = validatedWord;
+
+		if (!valid) {
+			response.statusCode = 400;
+			response.body = JSON.stringify({message: 'Bad request.', error: error});
 		}
-	
+		else {
+			await request.update(word);
+			response.statusCode = 201;
+			response.body = JSON.stringify({word: word, warning: warning});
+		}
+
 		return response;	
 	}
 	catch(error) {
@@ -48,7 +77,7 @@ const update = async (event) => {
 				'Access-Control-Allow-Origin': '*',
 				'Access-Control-Allow-Credentials': true,
 			},
-			body: JSON.stringify({msg: 'error', error: error.message}),
+			body: JSON.stringify({message: 'error', error: error.message}),
 		}
 	}
 }
