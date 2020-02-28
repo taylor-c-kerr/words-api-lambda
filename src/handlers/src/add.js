@@ -6,19 +6,21 @@ const _ = require('lodash');
 
 /**
  * @param {object} word
- * @returns {boolean}
+ * @returns {string}
 */
 const isAlreadyAdded = async (word) => {
 	const {id, name} = word;
+	let message;
 
 	const idExists = await request.get(id);
 	if (!_.isEmpty(idExists)) {
-		return true;
+		message = 'ID already exists';
 	}
 
 	const allWords = await request.list({name});;
 	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
-	return nameExists.length > 0;
+	message = nameExists.length > 0 ? 'Name already exists' : '';
+	return message;
 }
 
 /**
@@ -29,6 +31,7 @@ const add = async (event) => {
 	try {
 		let {body} = event;
 		body = JSON.parse(body);
+		body = format(body);
 	
 		let response = {
 			statusCode: null,
@@ -46,7 +49,6 @@ const add = async (event) => {
 	
 			return response;
 		};
-	
 		const validatedWord = await Validate.word(body);
 		let {valid, error, warning, word} = validatedWord;
 	
@@ -55,7 +57,6 @@ const add = async (event) => {
 			response.body = JSON.stringify({message: 'bad request', error: error});
 		}
 		else {
-			word = format(word);
 			await request.add(word);
 			response.statusCode = 201;
 			response.body = JSON.stringify({word: word, warning: warning});
