@@ -1,60 +1,59 @@
 const uuidv4 = require('uuid/v4')
 
 class Validate {
-	async word(word) {
+	default(word) {
 		const {name, id, category, definition} = word;
-
-		let validated = {
+		const error = [];
+		const warning = [];
+		const validated = {
 			valid: true,
-			error: [],
-			warning: [],
 			word: word
 		}
 
 		// name should be a string
 		if (!this.isString(name)) {
-			let error = [...validated.error];
-			error.push('Name is not a string.')
-			const validation = {
-				valid: false,
-				error: error
-			}
-			validated = Object.assign(validated, validation)
+			error.push('Name is not a string.');
+			validated.valid = false;
 		}
 
 		// if id is not provided or is improper, create a proper one
 		if (!id || !this.isGuid(id)) {
-			let warning = [...validated.warning];
-			let id = uuidv4();
+			const id = uuidv4();
 			warning.push(`Improper ID.  A proper one was created for you: ${id}.`);
-			validated.warning = warning;
-			validated.word.id = id;
+			word.id = id;
 		}
 
 		// category should be an array
-		if (!this.isArray(category)) {
-			let error = [...validated.error];
+		if (!Array.isArray(category)) {
 			error.push('Category must be an array.');
-			validated = {
-				valid: false,
-				error: error
-			}
+			validated.valid = false;
+		}
+
+		// definition should be an array
+		if (!Array.isArray(definition)) {
+			error.push('Definition must be an array.');
+			validated.valid = false;
+		}
+
+		validated.error = error;
+		validated.warning = warning;
+		validated.word = word;
+		return validated;
+	}
+
+	word(word) {
+		const {category, definition} = word;
+
+		const validated = this.default(word);
+
+		if (!validated.valid) {
+			return validated;
 		}
 
 		// items in category should be strings
 		if (!this.arrayOnlyContains(category, 'string')) {
 			let error = [...validated.error];
 			error.push('Categories must be strings.');
-			validated = {
-				valid: false,
-				error: error
-			}
-		}
-
-		// definition should be an array
-		if (!this.isArray(definition)) {
-			let error = [...validated.error];
-			error.push('Definition must be an array.');
 			validated = {
 				valid: false,
 				error: error

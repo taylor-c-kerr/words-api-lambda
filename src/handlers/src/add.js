@@ -19,7 +19,7 @@ const isAlreadyAdded = async (word) => {
 
 	const allWords = await request.list({name});;
 	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
-	message = nameExists.length > 0 ? 'Name already exists' : '';
+	message = nameExists.length > 0 ? 'Word already exists' : '';
 	return message;
 }
 
@@ -49,7 +49,16 @@ const add = async (event) => {
 	
 			return response;
 		};
-		const validatedWord = await Validate.word(body);
+
+		let validatedWord;
+
+		if (body.category.includes('place')) {
+			validatedWord = Validate.default(body);
+		}
+		else {
+			validatedWord = Validate.word(body);
+		}
+
 		let {valid, error, warning, word} = validatedWord;
 	
 		if (!valid) {
