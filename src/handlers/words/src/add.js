@@ -1,6 +1,6 @@
-const Validate = require('../../services/validation');
-const format = require('../../services/formatter');
-const Request = require('../../controllers/Request');
+const Validate = require('../../../services/validation');
+const format = require('../../../services/formatter');
+const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
 

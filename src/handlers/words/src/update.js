@@ -1,8 +1,8 @@
-const format = require('../../services/formatter');
-const Request = require('../../controllers/Request');
+const format = require('../../../services/formatter');
+const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
-const Validate = require('../../services/validation');
+const Validate = require('../../../services/validation');
 
 /**
  * @param {string} id The id of the word to be updated

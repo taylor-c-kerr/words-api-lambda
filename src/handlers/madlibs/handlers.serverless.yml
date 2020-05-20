@@ -1,0 +1,39 @@
+madlibs-list:
+  handler: ./src/handlers/madlibs/src/list.handler
+  events:
+    - http:
+        path: madlibs
+        method: get
+        cors: true
+        request:
+          parameters:
+            querystrings:
+              title: false
+madlibs-get:
+  handler: ./src/handlers/madlibs/src/get.handler
+  events:
+    - http:
+        path: madlibs/{id}
+        method: get
+        cors: true
+madlibs-add:
+  handler: ./src/handlers/madlibs/src/add.handler
+  events:
+    - http:
+        path: madlibs
+        method: post
+        cors: true
+madlibs-delete:
+  handler: ./src/handlers/madlibs/src/delete.handler
+  events:
+    - http:
+        path: madlibs/{id}
+        method: delete
+        cors: true
+madlibs-update:
+  handler: ./src/handlers/madlibs/src/update.handler
+  events:
+    - http:
+        path: madlibs/{id}
+        method: put
+        cors: true

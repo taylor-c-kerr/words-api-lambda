@@ -1,5 +1,5 @@
-list:
-  handler: ./src/handlers/src/list.handler
+words-list:
+  handler: ./src/handlers/words/src/list.handler
   events:
     - http:
         path: words
@@ -9,29 +9,30 @@ list:
           parameters:
             querystrings:
               name: false
-get:
-  handler: ./src/handlers/src/get.handler
+              list: false
+words-get:
+  handler: ./src/handlers/words/src/get.handler
   events:
     - http:
         path: words/{id}
         method: get
         cors: true
-add:
-  handler: ./src/handlers/src/add.handler
+words-add:
+  handler: ./src/handlers/words/src/add.handler
   events:
     - http:
         path: words
         method: post
         cors: true
-delete:
-  handler: ./src/handlers/src/delete.handler
+words-delete:
+  handler: ./src/handlers/words/src/delete.handler
   events:
     - http:
         path: words/{id}
         method: delete
         cors: true
-update:
-  handler: ./src/handlers/src/update.handler
+words-update:
+  handler: ./src/handlers/words/src/update.handler
   events:
     - http:
         path: words/{id}

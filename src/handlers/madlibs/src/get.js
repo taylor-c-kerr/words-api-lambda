@@ -1,4 +1,4 @@
-const Request = require('../../controllers/Request');
+const Request = require('../../../controllers/Request');
 const request = new Request();
 
 /**

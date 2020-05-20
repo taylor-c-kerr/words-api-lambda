@@ -1,29 +1,28 @@
-const Request = require('../../controllers/Request');
+const Request = require('../../../controllers/Request');
 const request = new Request();
 
 /**
- * @param {string} id The id of the word to be deleted from the database
+ * @param {string} id The id of the word to be retrieved from the database
  * @returns {object} response The data to be used in the server's response
 */
-exports.handler = async (event) => {
+const get = async (event) => {
 	try {
 		const { pathParameters } = event;
 		const { id } = pathParameters;
 	
-		if (!id) {
-		  return {statusCode: 400, body: JSON.stringify({message: 'bad request'})}
-		}
-	
-		await request.delete(id);
+		const word = await request.get(id);
 		const response = {
-			statusCode: 202,
+			statusCode: 200,
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Access-Control-Allow-Credentials': true
 			},
-			body: JSON.stringify({msg: 'item deleted', id: id})
+			body: JSON.stringify(word.Item)
 		}
-		return response;	
+		if (!word.Item) {
+			return {statusCode: 404, body: JSON.stringify({msg: 'resource not found'})}
+		}
+		return response;
 	}
 	catch(error) {
 		return {
@@ -36,3 +35,4 @@ exports.handler = async (event) => {
 		}
 	}
 }
+exports.handler = get;
