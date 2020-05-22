@@ -27,24 +27,14 @@ const update = async (event) => {
 		const { pathParameters } = event;
 		let { body } = event;
 		const { id } = pathParameters;
-		body = JSON.parse(body);
+		const word = JSON.parse(body);
 	
 		if (!body.id) {
 			body.id = id;
 		}
-	
-		const {message, words} = await isAlreadyAdded(body);
 		
-		if (message) {
-			return createResponse(400, {error: message});
-		} else if (!message) {
-			return createResponse(404, {});
-		} else if (words && words[0].id !== body.id) {
-			return createResponse(400, {error: 'IDs do not match'});
-		}
-
 		await request.update(word);
-		return createResponse(201, {word, warning});
+		return createResponse(201, {word});
 	
 	}
 	catch(error) {
