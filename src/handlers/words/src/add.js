@@ -1,5 +1,6 @@
 const Validate = require('../../../services/validation');
 const format = require('../../../services/formatter');
+const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
@@ -14,7 +15,7 @@ const isAlreadyAdded = async (word) => {
 
 	const idExists = await request.get(id);
 	if (!_.isEmpty(idExists)) {
-		message = 'ID already exists';
+		return 'ID already exists';
 	}
 
 	const allWords = await request.list({name});;
@@ -33,25 +34,12 @@ const add = async (event) => {
 		body = JSON.parse(body);
 		body = format(body);
 	
-		let response = {
-			statusCode: null,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: null,
-		};
-	
 		const exists = await isAlreadyAdded(body);
 		if (exists) {
-			response.statusCode = 400;
-			response.body = JSON.stringify({message: 'bad request', error: 'Word already exists.'});
-	
-			return response;
+			return createResponse(400, {error: 'Word already exists.'});
 		};
 
 		let validatedWord;
-
 		if (body.category.includes('place')) {
 			validatedWord = Validate.default(body);
 		}
@@ -62,26 +50,15 @@ const add = async (event) => {
 		let {valid, error, warning, word} = validatedWord;
 	
 		if (!valid) {
-			response.statusCode = 400;
-			response.body = JSON.stringify({message: 'bad request', error: error});
+			return createResponse(400, {error: error})
 		}
 		else {
 			await request.add(word);
-			response.statusCode = 201;
-			response.body = JSON.stringify({word: word, warning: warning});
+			return createResponse(201, {word: word, warning: warning})
 		}
-	
-		return response;
-	}
+		}
 	catch (error) {
-		return {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: JSON.stringify({msg: 'error', error: error.message}),
-		}
+		return createResponse(500, {error: error.message})
 	}
 
 }

@@ -1,8 +1,8 @@
+const createResponse = require('../../../services/response');
 const format = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
-const Validate = require('../../../services/validation');
 
 /**
  * @param {string} id The id of the word to be updated
@@ -11,17 +11,15 @@ const Validate = require('../../../services/validation');
 */
 const isAlreadyAdded = async (word) => {
 	const {id, name} = word;
-	let message;
-
 	const idExists = await request.get(id);
 	if (!_.isEmpty(idExists)) {
-		message = 'ID already exists';
+		return { message: 'ID already exists', words:[] };
 	}
 
 	const allWords = await request.list({name});;
 	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
-	message = nameExists.length > 0 ? 'Name already exists' : '';
-	return {message, data: nameExists};
+	const message = nameExists.length ? 'Name already exists' : '';
+	return {message, words: nameExists};
 }
 
 const update = async (event) => {
@@ -35,50 +33,22 @@ const update = async (event) => {
 			body.id = id;
 		}
 	
-		const exists = await isAlreadyAdded(body);
-	
-		if (!exists) {
-		  return {statusCode: 404, body: JSON.stringify({message: 'Resource not found.'})}
-		}
-	
-		if (exists.data[0].id !== body.id) {
-		  return {statusCode: 400, body: JSON.stringify({message: `ID's dont match`})}
-		}
-	
-		let response = {
-			statusCode: null,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: null,
-		};
-
-		body = format(body);
-		const validatedWord = await Validate.word(body);
-		let {valid, error, warning, word} = validatedWord;
-
-		if (!valid) {
-			response.statusCode = 400;
-			response.body = JSON.stringify({message: 'Bad request.', error: error});
-		}
-		else {
-			await request.update(word);
-			response.statusCode = 201;
-			response.body = JSON.stringify({word: word, warning: warning});
+		const {message, words} = await isAlreadyAdded(body);
+		
+		if (message) {
+			return createResponse(400, {error: message});
+		} else if (!message) {
+			return createResponse(404, {});
+		} else if (words && words[0].id !== body.id) {
+			return createResponse(400, {error: 'IDs do not match'});
 		}
 
-		return response;	
+		await request.update(word);
+		return createResponse(201, {word, warning});
+	
 	}
 	catch(error) {
-		return {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: JSON.stringify({message: 'error', error: error.message}),
-		}
+		return createResponse(500, {error: error.message})
 	}
 }
 exports.handler = update;

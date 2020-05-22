@@ -1,3 +1,4 @@
+const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 
@@ -7,46 +8,32 @@ const request = new Request();
 const list = async (event) => {
 	try {
 		const {queryStringParameters} = event;
-	
-		let response = {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true
-			},
-			body: [],
-		};
-	
 		const dynamoResponse = await request.list();
-		response.statusCode = 200;
-		response.body = JSON.stringify(dynamoResponse.filter(res => res.name));
 	
 		if (queryStringParameters) {
 			const {name, list} = queryStringParameters;
 			if (name) {
-				const exists = dynamoResponse.filter(entry => entry.name === name);
-				response.body = JSON.stringify(exists);
-				response.statusCode = !exists.length ? 404 : exists.length ? 200 : 500;
-				return response;
+				const byName = dynamoResponse.filter(entry => entry.name === name);
+				if (byName) {
+					const statusCode = byName.length ? 200 : 404;
+					return createResponse(statusCode, byName)
+				}
+				return createResponse(500, {error: 'error filtering by name'});
 			}
 			else if (list) {
-				const filtered = dynamoResponse.filter(entry => entry.category.includes(list));
-				response.body = JSON.stringify(filtered);
-				response.statusCode = !filtered.length ? 404 : filtered.length ? 200 : 500;
-				return response;
+				const byList = dynamoResponse.filter(entry => entry.category.includes(list));
+				if (byList) {
+					const statusCode = byList.length ? 200 : 404;
+					return createResponse(statusCode, byList)
+				}
+				return createResponse(500, {error: 'error filtering by list'});
 			}
 		};
-		return response;
+		return createResponse(200, dynamoResponse.filter(res => res.name));
 	}
 	catch(error) {
-		return {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: JSON.stringify({msg: 'error', error: error.message}),
-		}
+		return createResponse(500, {error: error.message});
 	}
 }
+
 exports.handler = list;

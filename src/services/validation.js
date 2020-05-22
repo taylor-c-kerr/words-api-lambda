@@ -54,49 +54,39 @@ class Validate {
 		if (!this.arrayOnlyContains(category, 'string')) {
 			let error = [...validated.error];
 			error.push('Categories must be strings.');
-			validated = {
-				valid: false,
-				error: error
-			}
+			validated.valid = false;
+			validated.error = error;
 		}
 
 		// definitions should be an array of objects
 		if (definition && !this.arrayOnlyContains(definition, 'object')) {
 			let error = [...validated.error];
 			error.push('Definitions must be objects.');
-			validated = {
-				valid: false,
-				error: error
-			}
+			validated.valid = false;
+			validated.error = error;
 		}
 		else {
 			// definition.partofspeech exists and should be a string
 			if (definition && !definition.every(d => d.partOfSpeech || this.isString(d.partOfSpeech))) {
 				let error = [...validated.error];
 				error.push('Part of speech must be a string.')
-				validated = {
-					valid: false,
-					error: error
+				validated.valid = false;
+				validated.error = error;
 				}
-			}
 			// def.entries should be an array
 			if (definition && !definition.every(d => d.entries && this.isArray(d.entries))) {
 				let error = [...validated.error];
 				error.push('Entries must be an array.');
-				validated = {
-					valid: false,
-					error: error
+				validated.valid = false;
+				validated.error = error;
 				}
-			}
 			// def.entries should be an array of strings
 			if (definition && !definition.every(d => this.arrayOnlyContains(d.entries, 'string'))) {
 				let error = [...validated.error];
 				error.push('Entries must be strings.');
-				validated = {
-					valid: false,
-					error: error
+				validated.valid = false;
+				validated.error = error;
 				}
-			}
 		}
 
 		return validated;
