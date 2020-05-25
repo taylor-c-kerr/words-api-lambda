@@ -1,6 +1,39 @@
 const uuidv4 = require('uuid/v4')
 
 class Validate {
+	updateWord(word) {
+		const {name, category, definition} = word;
+		const validated = {
+			valid: true,
+			word: word
+		}
+		
+		const error = this.checkForRequiredFields({name, category, definition});
+		if (error.length) {
+			validated.valid = false;
+			validated.error = error;
+			return validated;
+		}
+		
+		if (!this.isString(name)) {
+			error.push('Name is not a string.');
+			validated.valid = false;
+		}
+
+		if (!Array.isArray(category)) {
+			error.push('Category must be an array.');
+			validated.valid = false;
+		}
+
+		if (!Array.isArray(definition)) {
+			error.push('Definition must be an array.');
+			validated.valid = false;
+		}
+
+		validated.error = error;
+		return validated;
+	}
+
 	default(word) {
 		const {name, id, category, definition} = word;
 		const error = [];
@@ -41,7 +74,7 @@ class Validate {
 		return validated;
 	}
 
-	word(word) {
+	addWord(word) {
 		const {category, definition} = word;
 
 		const validated = this.default(word);
@@ -155,6 +188,10 @@ class Validate {
 
 	isEmptyString(s) {
 		return s === '';
+	}
+
+	checkForRequiredFields(word) {
+		return Object.keys(word).filter(key => !word[key]).map(key => `${key} is a required field`)
 	}
 }
 

@@ -44,7 +44,7 @@ const add = async (event) => {
 			validatedWord = Validate.default(body);
 		}
 		else {
-			validatedWord = Validate.word(body);
+			validatedWord = Validate.addWord(body);
 		}
 
 		let {valid, error, warning, word} = validatedWord;
