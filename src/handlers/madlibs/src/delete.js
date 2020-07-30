@@ -1,3 +1,4 @@
+const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 
@@ -11,28 +12,13 @@ exports.handler = async (event) => {
 		const { id } = pathParameters;
 	
 		if (!id) {
-		  return {statusCode: 400, body: JSON.stringify({message: 'bad request'})}
+			return createResponse(400);
 		}
 	
 		await request.delete(id);
-		const response = {
-			statusCode: 202,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true
-			},
-			body: JSON.stringify({msg: 'item deleted', id: id})
-		}
-		return response;	
+		return createResponse(202);
 	}
 	catch(error) {
-		return {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: JSON.stringify({msg: 'error', error: error.message}),
-		}
+		return createResponse(500, {error: error.message});
 	}
 }

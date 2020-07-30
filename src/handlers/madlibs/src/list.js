@@ -1,3 +1,4 @@
+const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 
@@ -7,36 +8,20 @@ const request = new Request();
 const list = async (event) => {
 	try {
 		const {queryStringParameters} = event;
-
-		let response = {
-			statusCode: null,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true
-			},
-			body: [],
-		};
-	
 		const dynamoResponse = await request.list();
-		response.statusCode = 200;
-		response.body = JSON.stringify(dynamoResponse.filter(res => res.title));
-
-		if (queryStringParameters && queryStringParameters.title) {
-			const exists = dynamoResponse.filter(res => res.title === queryStringParameters.title);
-			response.body = JSON.stringify(exists);
-			response.statusCode = !exists.length ? 404 : exists.length ? 200 : 500;
-		};
-		return response;
+		if (queryStringParameters) {
+			const { title } = queryStringParameters;
+			if (title) {
+				const byTitle = dynamoResponse.filter(entry => entry.title === title);
+				const statusCode = byTitle.length ? 200 : 404;
+				return createResponse(statusCode, byTitle)
+			}
+		}
+		return createResponse(200, dynamoResponse.filter(res => res.title));
 	}
 	catch(error) {
-		return {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: JSON.stringify({msg: 'error', error: error.message}),
-		}
+		return createResponse(500, {error: error.message})
 	}
 }
+
 exports.handler = list;

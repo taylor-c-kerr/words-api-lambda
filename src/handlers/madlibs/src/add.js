@@ -1,3 +1,4 @@
+const createResponse = require('../../../services/response');
 // const Validate = require('../../../services/validation');
 const format = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
@@ -8,14 +9,18 @@ const _ = require('lodash');
  * @param {object} word
  * @returns {string}
 */
-const isAlreadyAdded = async (word) => {
-	const {id} = word;
+const getIsAlreadyAdded = async (word) => {
+	const {id, name} = word;
 	let message;
 
 	const idExists = await request.get(id);
 	if (!_.isEmpty(idExists)) {
-		message = 'ID already exists';
+		return 'ID already exists';
 	}
+
+	const allWords = await request.list({name});;
+	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
+	message = nameExists.length > 0 ? 'Word already exists' : '';
 	return message;
 }
 
@@ -28,38 +33,25 @@ const add = async (event) => {
 		let {body} = event;
 		body = JSON.parse(body);
 	
-		let response = {
-			statusCode: null,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: null,
-		};
-	
-		const exists = await isAlreadyAdded(body);
-		if (exists) {
+		const isAlreadyAdded = await getIsAlreadyAdded(body);
+		if (isAlreadyAdded) {
 			response.statusCode = 400;
-			response.body = JSON.stringify({message: 'bad request', error: 'Word already exists.'});
-	
-			return response;
+			return createResponse(400, {error: 'item already exists'});
 		};
 
-			await request.add(word);
-			response.statusCode = 201;
-			response.body = JSON.stringify({word: word, warning: warning});
+		const validatedWord = Validate.default(body);
+		const {valid, error, warning, word} = validatedWord;
 	
-		return response;
+		if (!valid) {
+			return createResponse(400, {error})
+		}
+		else {
+			await request.add(word);
+			return createResponse(201, {word: word, warning: warning})
+		}
 	}
 	catch (error) {
-		return {
-			statusCode: 500,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
-			},
-			body: JSON.stringify({msg: 'error', error: error.message}),
-		}
+		return createResponse(500, {error: error.message})
 	}
 
 }
