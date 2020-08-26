@@ -1,20 +1,20 @@
 const createResponse = require('../../../services/response');
-const format = require('../../../services/formatter');
+// const format = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
-const Validate = require('../../../services/validation');
+// const Validate = require('../../../services/validation');
 
 /**
- * @param {string} id The id of the word to be updated
- * @param {object} word The data to be updated
+ * @param {string} id The id of the madlib to be updated
+ * @param {object} madlib The data to be updated
  * @returns {object} response The data to be used in the server's response
 */
-const getIsNameChanged = async (body) => {
-	const { name, id } = body;
-	const allWordsByName = await request.list({name});
-	const wordById = await request.get(id);
-	return allWordsByName.length === 0 || wordById.Item.name !== name;
+const getIsTitleChanged = async (body) => {
+	const { title, id } = body;
+	const allMadlibsByTitle = await request.list({title});
+	const madlibById = await request.get(id);
+	return allMadlibsByTitle.length === 0 || madlibById.Item.title !== title;
 }
 
 const update = async (event) => {
@@ -27,37 +27,39 @@ const update = async (event) => {
 			body.id = id;
 		}
 	
-		const isNameChanged = await getIsNameChanged(body);
-
 		const idExists = await request.get(id);
 		if (_.isEmpty(idExists)) {
 			return createResponse(404);
 		}
 	
-		if (!word.id) {
-			word.id = id;
-		} else if (word.id !== id) {
+		if (!body.id) {
+			body.id = id;
+		} else if (body.id !== id) {
 			return createResponse(400, {error: 'incorrect id'});
 		}
 
-		const isNameChanged = await getIsNameChanged(word);
-		if (isNameChanged) {
-			return createResponse(400, {error: `can't change name`});
+		const isTitleChanged = await getIsTitleChanged(body);
+		if (isTitleChanged) {
+			return createResponse(400, {error: `can't change title`});
 		}
 	
-		const validatedWord = await Validate.default(body);
-		const {valid, error, warning, word} = validatedWord;
+		// todo, add this back when validation has been added for madlibs
+		/* const validatedWord = await Validate.default(body);
+		const { valid, error, warning, word } = validatedWord;
 
 		if (!valid) {
-			return createResponse(400, {error})
+			return createResponse(400, { error })
 		}
 		else {
 			await request.update(word);
 			return createResponse(201, {word, warning});
-		}
+		} */
+
+		await request.update(body);
+		return createResponse(201, { madlib: body })
 	}
 	catch(error) {
-		return createResponse(500, {error: error.message})
+		return createResponse(500, { error: error.message })
 	}
 }
 exports.handler = update;
