@@ -19,6 +19,6 @@ exports.handler = async (event) => {
 		return createResponse(202);
 	}
 	catch(error) {
-		return createResponse(500, {error: error.message});
+		return createResponse(500, { error: error.message });
 	}
 }
