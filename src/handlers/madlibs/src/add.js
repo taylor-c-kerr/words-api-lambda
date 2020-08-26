@@ -1,16 +1,16 @@
 const createResponse = require('../../../services/response');
 // const Validate = require('../../../services/validation');
-const format = require('../../../services/formatter');
+// const format = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
 
 /**
- * @param {object} word
+ * @param {object} madlib
  * @returns {string}
 */
-const getIsAlreadyAdded = async (word) => {
-	const {id, name} = word;
+const getIsAlreadyAdded = async (madlib) => {
+	const { id, title } = madlib;
 	let message;
 
 	const idExists = await request.get(id);
@@ -18,9 +18,9 @@ const getIsAlreadyAdded = async (word) => {
 		return 'ID already exists';
 	}
 
-	const allWords = await request.list({name});;
-	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
-	message = nameExists.length > 0 ? 'Word already exists' : '';
+	const allMadlibs = await request.list( { title });
+	const titleExists = allMadlibs.filter(madlib => madlib.title.toLowerCase() === title.toLowerCase());
+	message = titleExists.length > 0 ? 'Madlib already exists' : '';
 	return message;
 }
 
@@ -30,25 +30,28 @@ const getIsAlreadyAdded = async (word) => {
 */
 const add = async (event) => {
 	try {
-		let {body} = event;
+		let { body } = event;
 		body = JSON.parse(body);
 	
 		const isAlreadyAdded = await getIsAlreadyAdded(body);
 		if (isAlreadyAdded) {
-			response.statusCode = 400;
 			return createResponse(400, {error: 'item already exists'});
 		};
 
-		const validatedWord = Validate.default(body);
-		const {valid, error, warning, word} = validatedWord;
+		// todo, add this back when validation has been added for madlibs
+		/* const validatedMadlib = Validate.default(body);
+		const {valid, error, warning, madlib} = validatedMadlib;
 	
 		if (!valid) {
-			return createResponse(400, {error})
+			return createResponse(400, { error })
 		}
 		else {
 			await request.add(word);
-			return createResponse(201, {word: word, warning: warning})
-		}
+			return createResponse(201, {word, warning})
+		} */
+
+		await request.add(body);
+		return createResponse(201, { madlib: body })
 	}
 	catch (error) {
 		return createResponse(500, {error: error.message})

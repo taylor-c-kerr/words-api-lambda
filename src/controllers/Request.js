@@ -34,7 +34,10 @@ class Request {
 		const items = response.Items;
 
 		if (options.name) {
-			return items.filter(item => item.name === options.name)
+			return items.filter(item => item.name === options.name);
+		}
+		if (options.title) {
+			return items.filter(item => item.title === options.title);
 		}
 		return items;
 	}
