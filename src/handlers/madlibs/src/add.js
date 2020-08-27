@@ -40,6 +40,7 @@ const add = async (event) => {
 
 		const validatedMadlib = Validate.addMadlib(body);
 		const { valid, error, warning, madlib } = validatedMadlib;
+		console.log(validatedMadlib)
 	
 		if (!valid) {
 			return createResponse(400, { error })

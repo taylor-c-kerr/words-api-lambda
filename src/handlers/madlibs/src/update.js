@@ -3,7 +3,7 @@ const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
-// const Validate = require('../../../services/validation');
+const Validate = require('../../../services/validation');
 
 /**
  * @param {string} id The id of the madlib to be updated
@@ -44,16 +44,17 @@ const update = async (event) => {
 		}
 	
 		// todo, add this back when validation has been added for madlibs
-		/* const validatedWord = await Validate.default(body);
-		const { valid, error, warning, word } = validatedWord;
+		const validatedMadlib = await Validate.addMadlib(body);
+		const { valid, error, warning, madlib } = validatedMadlib;
+		console.log('validatedMadlib', validatedMadlib)
 
 		if (!valid) {
 			return createResponse(400, { error })
 		}
 		else {
-			await request.update(word);
-			return createResponse(201, {word, warning});
-		} */
+			await request.update(madlib);
+			return createResponse(201, { madlib, warning });
+		}
 
 		await request.update(body);
 		return createResponse(201, { madlib: body })
