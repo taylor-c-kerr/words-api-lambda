@@ -1,5 +1,5 @@
 const createResponse = require('../../../services/response');
-// const Validate = require('../../../services/validation');
+const Validate = require('../../../services/validation');
 // const format = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
 const request = new Request();
@@ -38,20 +38,16 @@ const add = async (event) => {
 			return createResponse(400, {error: 'item already exists'});
 		};
 
-		// todo, add this back when validation has been added for madlibs
-		/* const validatedMadlib = Validate.default(body);
-		const {valid, error, warning, madlib} = validatedMadlib;
+		const validatedMadlib = Validate.addMadlib(body);
+		const { valid, error, warning, madlib } = validatedMadlib;
 	
 		if (!valid) {
 			return createResponse(400, { error })
 		}
 		else {
-			await request.add(word);
-			return createResponse(201, {word, warning})
-		} */
-
-		await request.add(body);
-		return createResponse(201, { madlib: body })
+			await request.add(madlib);
+			return createResponse(201, { madlib, warning })
+		}
 	}
 	catch (error) {
 		return createResponse(500, {error: error.message})

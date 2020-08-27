@@ -74,6 +74,46 @@ class Validate {
 		return validated;
 	}
 
+	defaultMadlib(madlib) {
+		const { id, title, text, prompts } = madlib;
+		const error = [];
+		const warning = [];
+		const validated = {
+			valid: true,
+			madlib,
+		}
+
+		// title should be a string
+		if (!this.isString(title)) {
+			error.push('Title is not a string.');
+			validated.valid = false;
+		}
+
+		// text should be a string
+		if (!this.isString(text)) {
+			error.push('Text is not a string.');
+			validated.valid = false;
+		}
+
+		// if id is not provided or is improper, create a proper one
+		if (!id || !this.isGuid(id)) {
+			const id = uuidv4();
+			warning.push(`Improper ID.  A proper one was created for you: ${id}.`);
+			madlib.id = id;
+		}
+
+		// prompts should be an array
+		if (!Array.isArray(prompts)) {
+			error.push('Prompts must be an array.');
+			validated.valid = false;
+		}
+
+		validated.error = error;
+		validated.warning = warning;
+		validated.madlib = madlib;
+		return validated;
+	}
+
 	addWord(word) {
 		const {category, definition} = word;
 
@@ -120,6 +160,32 @@ class Validate {
 				validated.valid = false;
 				validated.error = error;
 				}
+		}
+
+		return validated;
+	}
+
+	addMadlib(madlib) {
+		const supportedPrompts = ['noun', 'verb', 'adjective', 'adverb', 'place'];
+
+		const validated = this.defaultMadlib(madlib);
+
+		if (!validated.valid) {
+			return validated;
+		}
+
+		// items in 'prompts' should be strings
+		if (!this.arrayOnlyContains(madlib.prompts, 'string')) {
+			validated.error.push('Prompts must contain strings.');
+			validated.valid = false;
+		}
+
+		// only includes supported prompts
+		const prompts = madlib.text.match(/\*\*\*[a-z]+\*\*\*/g).map(prompt => prompt.replace('*', ''));
+		const unsupportedPrompts = prompts.filter(prompt => supportedPrompts.includes(prompt));
+		if (unsupportedPrompts.length) {
+			validated.error.push(`Unsupported prompt included: ${unsupportedPrompts}`);
+			validated.valid = false;
 		}
 
 		return validated;
