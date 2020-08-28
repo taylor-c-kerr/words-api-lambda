@@ -4,6 +4,7 @@ const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
+const ModelAddRoute = require('../../model-route/model-add');
 
 /**
  * @param {object} word
@@ -22,6 +23,21 @@ const getIsAlreadyAdded = async (word) => {
 	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
 	message = nameExists.length > 0 ? 'Word already exists' : '';
 	return message;
+}
+
+const validateWord = (word) => {
+	const result = Validate.addWord(word);
+	if (result.error.length) return result.error;
+}
+
+// format
+dataFormatting = (word) => {
+	return format(word);
+}
+
+// define response
+const defineResponse = (word) => {
+	return { word };
 }
 
 /**
@@ -61,4 +77,14 @@ const add = async (event) => {
 	}
 }
 
+const addNew = async (event) => {
+	const x = new ModelAddRoute(event, {
+		dataFormatting,
+		validation: validateWord,
+		dupeCheck: getIsAlreadyAdded,
+		defineResponse
+	});
+
+	await x.model()
+}
 exports.handler = add;

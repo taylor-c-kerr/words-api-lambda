@@ -20,10 +20,12 @@ const createResponse = (statusCode, body = {}) => {
   };
   if (statusCode === 200) {
     response.body = JSON.stringify(body);
+    console.log(response)
     return response;
   } else {
     const message = !messages[statusCode] ? messages[400] : messages[statusCode];
     response.body = JSON.stringify({message, ...body});
+    console.log(response)
     return response
   }
 }

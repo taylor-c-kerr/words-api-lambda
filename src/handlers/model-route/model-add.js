@@ -1,17 +1,14 @@
-const createResponse = require('../../../services/response');
+const createResponse = require('../../services/response');
+const Request = require('../../controllers/Request');
+const request = new Request();
 
-export default class ModelAddRoute{
+module.exports = class ModelAddRoute{
   constructor(event, stages) {
-    this.event = JSON.parse(event);
+    this.body = JSON.parse(event.body);
     this.dataFormattingStage = stages.dataFormatting;
     this.validationStage = stages.validation;
     this.dupeCheckStage = stages.dupeCheck;
-    this.defineResponse = stage.defineResponse;
-    this.body = {};
-    this.valid = null;
-    this.error = null;
-    this.warning = null;
-    this.result = {};
+    this.defineResponse = stages.defineResponse;
   }
 
   handleError(error) {
@@ -20,8 +17,6 @@ export default class ModelAddRoute{
 
   async model() {
     try {
-      this.body = this.event;
-
       // format stage
       if (this.dataFormattingStage) {
         const { error } = this.dataFormattingStage(this.body);
@@ -29,28 +24,27 @@ export default class ModelAddRoute{
           return this.handleError(error);
         }
       }
-  
       // validation stage
       if (this.validationStage) {
-        const { error } = this.validationStage();
-        if (error) {
-          return this.handleError(error);
+        const result = this.validationStage(this.body);
+        if (result && result.error) {
+          return this.handleError(result.error);
         }
       }
-
       // dupe check stage
-      const { isDupe, error } = this.dupeCheckStage();
+      const result = await this.dupeCheckStage(this.body);
+      const { isDupe, error } = result;
       if (isDupe) {
         return this.handleError(error)
       }
-
       // make request
       await request.add(this.body);
-
       // format response stage
-      const response = this.formatResponse(this.body);
+      const response = this.defineResponse(this.body);
+      console.log(response)
 			return createResponse(201, response)
     } catch (error) {
+      console.log('catch', error)
       return createResponse(500, { error: error.message });
     }
   }
