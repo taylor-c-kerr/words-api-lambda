@@ -19,13 +19,15 @@ const getIsNameChanged = async (body) => {
 
 const update = async (event) => {
 	try {
-		const body = JSON.parse(event.body);
-		const { pathParameters } = event;
+		let { pathParameters, body } = event;
 		const { id } = pathParameters;
+		body = JSON.parse(body);
+		body = format(body);
+
 		const validatedWord = Validate.updateWord(body);
-		let {valid, error, word, warning} = validatedWord;
+		let { valid, error, word, warning } = validatedWord;
 		if (!valid) {
-			return createResponse(400, {error});
+			return createResponse(400, { error });
 		}
 
 		const idExists = await request.get(id);
@@ -36,19 +38,19 @@ const update = async (event) => {
 		if (!word.id) {
 			word.id = id;
 		} else if (word.id !== id) {
-			return createResponse(400, {error: 'incorrect id'});
+			return createResponse(400, { error: 'incorrect id' });
 		}
 		
 		const isNameChanged = await getIsNameChanged(word);
 		if (isNameChanged) {
-			return createResponse(400, {error: `can't change name`});
+			return createResponse(400, { error: `can't change name` });
 		}
 
 		await request.update(word);
-		return createResponse(201, {word, warning});
+		return createResponse(201, { word, warning });
 	}
 	catch(error) {
-		return createResponse(500, {error: error.message})
+		return createResponse(500, { error: error.message });
 	}
 }
 

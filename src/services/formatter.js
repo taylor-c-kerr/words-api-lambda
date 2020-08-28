@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const fixD = obj => {
+const fixD = (obj) => {
     let partOfSpeech, entries;
     for (key in obj) {
         switch (key.toLowerCase()) {
@@ -45,7 +45,18 @@ const fixKeys = (obj) => {
     return {name, id, category, definition};
 }
 
+const isMissingKeys = (obj) => {
+  const requiredKeys = ['id', 'name', 'category', 'definition'];
+  const providedKeys = Object.keys(obj).map(key => key.toLowerCase());
+  const missingKeys = requiredKeys.filter(key => !providedKeys.includes(key));
+  return missingKeys.length ? missingKeys : null;
+}
+
 const format = (word) => {
+  const missingKeys = isMissingKeys(word);
+  if (missingKeys) {
+    throw Error(`required field${missingKeys.length === 1 ? '' : 's'} missing: ${missingKeys.join(', ')}`)
+  }
     word = fixKeys(word);
     let {name, definition, id, category} = word;
     name = name.toLowerCase();

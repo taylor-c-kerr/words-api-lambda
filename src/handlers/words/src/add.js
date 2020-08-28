@@ -10,7 +10,7 @@ const _ = require('lodash');
  * @returns {string}
 */
 const getIsAlreadyAdded = async (word) => {
-	const {id, name} = word;
+	const { id, name } = word;
 	let message;
 
 	const idExists = await request.get(id);
@@ -30,28 +30,34 @@ const getIsAlreadyAdded = async (word) => {
 */
 const add = async (event) => {
 	try {
-		let {body} = event;
+		let { body } = event;
 		body = JSON.parse(body);
 		body = format(body);
+
+		let validatedWord = Validate.addWord(body);
+		if (!validatedWord.valid) {
+			throw Error(validatedWord.error);
+		}
+	
 	
 		const isAlreadyAdded = await getIsAlreadyAdded(body);
 		if (isAlreadyAdded) {
 			return createResponse(400, {error: 'item already exists'});
 		};
 
-		const validatedWord = Validate.addWord(body);
-		const {valid, error, warning, word} = validatedWord;
+		validatedWord = Validate.addWord(body);
+		const { valid, error, warning, word } = validatedWord;
 	
 		if (!valid) {
-			return createResponse(400, {error})
+			return createResponse(400, { error })
 		}
 		else {
 			await request.add(word);
-			return createResponse(201, {word, warning})
+			return createResponse(201, { word, warning })
 		}
 		}
 	catch (error) {
-		return createResponse(500, {error: error.message})
+		return createResponse(500, { error: error.message })
 	}
 }
 
