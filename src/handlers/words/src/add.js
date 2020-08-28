@@ -55,7 +55,7 @@ const add = async (event) => {
 			await request.add(word);
 			return createResponse(201, { word, warning })
 		}
-		}
+	}
 	catch (error) {
 		return createResponse(500, { error: error.message })
 	}
