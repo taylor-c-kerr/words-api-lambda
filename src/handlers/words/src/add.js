@@ -1,5 +1,5 @@
 const Validate = require('../../../services/validation');
-const format = require('../../../services/formatter');
+const formatter = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
@@ -26,7 +26,7 @@ const validate = (word) => {
 }
 
 const format = (word) => {
-	return format(word);
+	return formatter(word);
 }
 
 const defineResponse = (word) => {
