@@ -2,7 +2,7 @@ const createResponse = require('../../services/response');
 const Request = require('../../controllers/Request');
 const request = new Request();
 
-class ModelUpdateRoute {
+class ModelGetRoute {
   constructor(event, stages) {
     this.body = JSON.parse(event.body);
     this.format = stages.format;
@@ -15,7 +15,7 @@ class ModelUpdateRoute {
     return createResponse(400, { error });
   }
 
-  async update() {
+  async get() {
     try {
       
     } catch (error) {
