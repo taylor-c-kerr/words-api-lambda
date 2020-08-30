@@ -2,13 +2,9 @@ const createResponse = require('../../services/response');
 const Request = require('../../controllers/Request');
 const request = new Request();
 
-class ModelGetRoute {
-  constructor(event, stages) {
-    this.body = JSON.parse(event.body);
-    this.format = stages.format;
-    this.validate = stages.validate;
-    this.checkDupes = stages.checkDupes;
-    this.defineResponse = stages.defineResponse;
+module.exports = class ModelGetRoute {
+  constructor(event) {
+    this.id = event.pathParameters.id;
   }
 
   handleError(error) {
@@ -17,7 +13,13 @@ class ModelGetRoute {
 
   async get() {
     try {
-      
+      const word = await request.get(this.id);
+
+      if (!word.Item) {
+        return createResponse(404);
+      }
+
+      return createResponse(200, word.Item);
     } catch (error) {
       return createResponse(500, { error: error.message });
     }

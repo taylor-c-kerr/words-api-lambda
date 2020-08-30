@@ -3,8 +3,7 @@ const Request = require('../../controllers/Request');
 const request = new Request();
 
 module.exports = class ModelDeleteRoute {
-  constructor(event, stages) {
-    this.body = JSON.parse(event.body);
+  constructor(event) {
     this.id = event.pathParameters.id;
   }
 
