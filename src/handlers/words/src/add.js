@@ -1,16 +1,11 @@
 const Validate = require('../../../services/validation');
 const format = require('../../../services/formatter');
-const createResponse = require('../../../services/response');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
 const ModelAddRoute = require('../../model-route/model-add');
 
-/**
- * @param {object} word
- * @returns {string}
-*/
-const getIsAlreadyAdded = async (word) => {
+const checkDupes = async (word) => {
 	const { id, name } = word;
 	let message;
 
@@ -25,66 +20,29 @@ const getIsAlreadyAdded = async (word) => {
 	return message;
 }
 
-const validateWord = (word) => {
+const validate = (word) => {
 	const result = Validate.addWord(word);
 	if (result.error.length) return result.error;
 }
 
-// format
-dataFormatting = (word) => {
+const format = (word) => {
 	return format(word);
 }
 
-// define response
 const defineResponse = (word) => {
 	return { word };
 }
 
-/**
- * @param {object} word The validated word to be added to the database
- * @returns {object} response The data to be used in the server's response
-*/
 const add = async (event) => {
-	try {
-		let { body } = event;
-		body = JSON.parse(body);
-		body = format(body);
-
-		let validatedWord = Validate.addWord(body);
-		if (!validatedWord.valid) {
-			throw Error(validatedWord.error);
-		}
-	
-	
-		const isAlreadyAdded = await getIsAlreadyAdded(body);
-		if (isAlreadyAdded) {
-			return createResponse(400, {error: 'item already exists'});
-		};
-
-		validatedWord = Validate.addWord(body);
-		const { valid, error, warning, word } = validatedWord;
-	
-		if (!valid) {
-			return createResponse(400, { error })
-		}
-		else {
-			await request.add(word);
-			return createResponse(201, { word, warning })
-		}
-	}
-	catch (error) {
-		return createResponse(500, { error: error.message })
-	}
-}
-
-const addNew = async (event) => {
-	const x = new ModelAddRoute(event, {
-		dataFormatting,
-		validation: validateWord,
-		dupeCheck: getIsAlreadyAdded,
+	const addHandler = new ModelAddRoute(event, {
+		format,
+		validate,
+		checkDupes,
 		defineResponse
 	});
 
-	await x.model()
+	const response = await addHandler.add();
+	return response;
 }
+
 exports.handler = add;

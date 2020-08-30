@@ -5,9 +5,9 @@ const request = new Request();
 module.exports = class ModelAddRoute{
   constructor(event, stages) {
     this.body = JSON.parse(event.body);
-    this.dataFormattingStage = stages.dataFormatting;
-    this.validationStage = stages.validation;
-    this.dupeCheckStage = stages.dupeCheck;
+    this.format = stages.format;
+    this.validate = stages.validate;
+    this.checkDupes = stages.checkDupes;
     this.defineResponse = stages.defineResponse;
   }
 
@@ -15,36 +15,38 @@ module.exports = class ModelAddRoute{
     return createResponse(400, { error });
   }
 
-  async model() {
+  async add() {
     try {
-      // format stage
-      if (this.dataFormattingStage) {
-        const { error } = this.dataFormattingStage(this.body);
+      /* format data stage */
+      if (this.format) {
+        const { error } = this.format(this.body);
         if (error) {
           return this.handleError(error);
         }
       }
-      // validation stage
-      if (this.validationStage) {
-        const result = this.validationStage(this.body);
+
+      /* validate data stage */
+      if (this.validate) {
+        const result = this.validate(this.body);
         if (result && result.error) {
           return this.handleError(result.error);
         }
       }
-      // dupe check stage
-      const result = await this.dupeCheckStage(this.body);
+
+      /* check dupes stage */
+      const result = await this.checkDupes(this.body);
       const { isDupe, error } = result;
       if (isDupe) {
         return this.handleError(error)
       }
-      // make request
+
+      /* make request */
       await request.add(this.body);
-      // format response stage
+
+      /* format and return response stage */
       const response = this.defineResponse(this.body);
-      console.log(response)
-			return createResponse(201, response)
+      return createResponse(201, response)
     } catch (error) {
-      console.log('catch', error)
       return createResponse(500, { error: error.message });
     }
   }
