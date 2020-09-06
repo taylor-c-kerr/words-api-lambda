@@ -11,15 +11,18 @@ const filterList = (results, listValue) => {
 };
 
 const filter = (param, results) => {
-	if (!param) return results;
+	const providedParams = Object.keys(param);
+	if (providedParams.length > 1) throw Error('Too many query params');
+	if (!providedParams.length) return results;
+
+	const paramKey = providedParams[0];
+	const paramValue = param[paramKey];
 	const filterParams = ['name', 'list'];
-	if (!filterParams.includes(param)) {
-		throw Error('Invalid query param');
-	}
-	if (param === 'name') {
-		return filterName(results, param);
-	} else if (param === 'list') {
-		return filterList(results, param);
+	if (!filterParams.includes(paramKey)) throw Error('Invalid query param');
+	if (paramKey === 'name') {
+		return filterName(results, paramValue);
+	} else if (paramKey === 'list') {
+		return filterList(results, paramValue);
 	}
 }
 
@@ -58,9 +61,7 @@ const listOld = async (event) => {
 }
 
 const list = async (event) => {
-	const listHandler = new ModelListRoute(event, {
-		filter
-	});
+	const listHandler = new ModelListRoute(event, { filter }, 'words');
 	return await listHandler.list();
 }
 
