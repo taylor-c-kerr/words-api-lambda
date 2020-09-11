@@ -1,6 +1,3 @@
-const createResponse = require('../../../services/response');
-const Request = require('../../../controllers/Request');
-const request = new Request();
 const ModelListRoute = require('../../model-route/model-list');
 
 const filterName = (results, name) => {
@@ -23,40 +20,6 @@ const filter = (param, results) => {
 		return filterName(results, paramValue);
 	} else if (paramKey === 'list') {
 		return filterList(results, paramValue);
-	}
-}
-
-const listOld = async (event) => {
-	try {
-		const {queryStringParameters} = event;
-		const dynamoResponse = await request.list();
-	
-		/* if (queryStringParameters) {
-			filter(queryStringParameters, dynamoResponse)
-			const {name, list} = queryStringParameters;
-			if (name) {
-				const byName = dynamoResponse.filter(entry => entry.name === name);
-				if (byName) {
-					const statusCode = byName.length ? 200 : 404;
-					return createResponse(statusCode, byName)
-				}
-				return createResponse(500, {error: 'error filtering by name'});
-			}
-			else if (list) {
-				const byList = dynamoResponse.filter(entry => {
-					return entry && entry.category && entry.category.includes(list)
-				});
-				if (byList) {
-					const statusCode = byList.length ? 200 : 404;
-					return createResponse(statusCode, byList)
-				}
-				return createResponse(500, {error: 'error filtering by list'});
-			}
-		}; */
-		return createResponse(200, dynamoResponse.filter(res => res.name));
-	}
-	catch(error) {
-		return createResponse(500, {error: error.message});
 	}
 }
 
