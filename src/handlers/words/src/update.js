@@ -98,7 +98,7 @@ const update = async (event) => {
 		checkForUnsupportedUpdate,
 		defineResponse
 	});
-	 const response = route.update();
+	 const response = await route.update();
 	 return response;
 }
 

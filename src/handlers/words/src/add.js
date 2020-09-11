@@ -7,17 +7,11 @@ const ModelAddRoute = require('../../model-route/model-add');
 
 const checkDupes = async (word) => {
 	const { id, name } = word;
-	let message;
-
 	const idExists = await request.get(id);
-	if (!_.isEmpty(idExists)) {
-		return 'ID already exists';
-	}
-
+	if (!_.isEmpty(idExists)) return 'ID already exists';
 	const allWords = await request.list({name});;
 	const nameExists = allWords.filter(word => word.name.toLowerCase() === name.toLowerCase());
-	message = nameExists.length > 0 ? 'Word already exists' : '';
-	return message;
+	return nameExists.length > 0 ? 'Word already exists' : '';
 }
 
 const validate = (word) => {
@@ -25,23 +19,18 @@ const validate = (word) => {
 	if (result.error.length) return result.error;
 }
 
-const format = (word) => {
-	return formatter(word);
-}
+const format = (word) => formatter(word);
 
-const defineResponse = (word) => {
-	return { word };
-}
+const defineResponse = (word) => ({ word });
 
 const add = async (event) => {
-	const addHandler = new ModelAddRoute(event, {
+	const route = new ModelAddRoute(event, {
 		format,
 		validate,
 		checkDupes,
 		defineResponse
 	});
-
-	const response = await addHandler.add();
+	const response = await route.add();
 	return response;
 }
 
