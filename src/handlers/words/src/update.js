@@ -40,7 +40,7 @@ const checkForUnsupportedUpdate = async (word, id) => {
 		return 404;
 	}
 
-	if (wordyById.Item.name !== word.name || wordsByName.length === 0) {
+	if (wordById.Item.name !== word.name || wordsByName.length === 0) {
 		return `Can't change name`;
 	}
 }
@@ -52,7 +52,7 @@ const validate = (word) => {
 
 const format = (word) => formatter(word);
 
-const defineResponse = (word) => { word };
+const defineResponse = (word) => ({ word });
 
 // const updateOld = async (event) => {
 	// try {
@@ -92,12 +92,14 @@ const defineResponse = (word) => { word };
 // }
 
 const update = async (event) => {
-	const UpdateHandler = new ModelUpdateRoute(event, {
+	const route = new ModelUpdateRoute(event, {
 		format,
 		validate,
 		checkForUnsupportedUpdate,
 		defineResponse
-	})
+	});
+	 const response = route.update();
+	 return response;
 }
 
 exports.handler = update;

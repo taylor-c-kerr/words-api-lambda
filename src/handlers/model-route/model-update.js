@@ -36,7 +36,7 @@ module.exports = class ModelUpdateRoute {
       }
 
       /* check for bad update stage */
-      const error = await this.checkForUnsupportedUpdate(this.body);
+      const error = await this.checkForUnsupportedUpdate(this.body, this.id);
       if (error) {
         return this.handleError(error)
       }
