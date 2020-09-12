@@ -54,43 +54,6 @@ const format = (word) => formatter(word);
 
 const defineResponse = (word) => ({ word });
 
-// const updateOld = async (event) => {
-	// try {
-		// let { pathParameters, body } = event;
-		// const { id } = pathParameters;
-		// body = JSON.parse(body);
-		// body = format(body);
-
-		// const validatedWord = Validate.updateWord(body);
-		// let { valid, error, word, warning } = validatedWord;
-		// if (!valid) {
-		// 	return createResponse(400, { error });
-		// }
-
-		// const idExists = await request.get(id);
-		// if (_.isEmpty(idExists)) {
-		// 	return createResponse(404);
-		// }
-
-		// if (!word.id) {
-		// 	word.id = id;
-		// } else if (word.id !== id) {
-		// 	return createResponse(400, { error: 'incorrect id' });
-		// }
-		
-		// const isNameChanged = await getIsNameChanged(word);
-		// if (isNameChanged) {
-		// 	return createResponse(400, { error: `can't change name` });
-		// }
-
-	// 	await request.update(word);
-	// 	return createResponse(201, { word, warning });
-	// }
-	// catch(error) {
-	// 	return createResponse(500, { error: error.message });
-	// }
-// }
-
 const update = async (event) => {
 	const route = new ModelUpdateRoute(event, {
 		format,
