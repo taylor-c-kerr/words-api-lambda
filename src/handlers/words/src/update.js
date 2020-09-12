@@ -1,22 +1,9 @@
 const Validate = require('../../../services/validation');
-// const createResponse = require('../../../services/response');
 const formatter = require('../../../services/formatter');
 const Request = require('../../../controllers/Request');
 const request = new Request();
 const _ = require('lodash');
 const ModelUpdateRoute = require('../../model-route/model-update');
-
-// /**
-//  * @param {string} id The id of the word to be updated
-//  * @param {object} word The data to be updated
-//  * @returns {object} response The data to be used in the server's response
-// */
-// const getIsNameChanged = async (body) => {
-// 	const { name, id } = body;
-// 	const allWordsByName = await request.list({name});
-// 	const wordById = await request.get(id);
-// 	return allWordsByName.length === 0 || wordById.Item.name !== name;
-// }
 
 const getWordById = (id) => request.get(id);
 
