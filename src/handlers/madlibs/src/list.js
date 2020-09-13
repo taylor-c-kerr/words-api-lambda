@@ -1,27 +1,26 @@
-const createResponse = require('../../../services/response');
-const Request = require('../../../controllers/Request');
-const request = new Request();
+const ModelListRoute = require('../../model-route/model-list');
 
-/**
- * @returns {object} response The data, including all the data from the db, to be used in the server's response
-*/
+const filterTitle = (results, title) => {
+	return results.filter(result => result.title === title)
+};
+
+const filter = (param, results) => {
+	const providedParams = Object.keys(param);
+	if (providedParams.length > 1) throw Error('Too many query params');
+	if (!providedParams.length) return results;
+
+	const paramKey = providedParams[0];
+	const paramValue = param[paramKey];
+	const filterParams = ['title'];
+	if (!filterParams.includes(paramKey)) throw Error('Invalid query param');
+	if (paramKey === 'title') {
+		return filterTitle(results, paramValue);
+	}
+}
+
 const list = async (event) => {
-	try {
-		const {queryStringParameters} = event;
-		const dynamoResponse = await request.list();
-		if (queryStringParameters) {
-			const { title } = queryStringParameters;
-			if (title) {
-				const byTitle = dynamoResponse.filter(entry => entry.title === title);
-				const statusCode = byTitle.length ? 200 : 404;
-				return createResponse(statusCode, byTitle)
-			}
-		}
-		return createResponse(200, dynamoResponse.filter(res => res.title));
-	}
-	catch(error) {
-		return createResponse(500, {error: error.message})
-	}
+	const listHandler = new ModelListRoute(event, { filter }, 'madlibs');
+	return await listHandler.list();
 }
 
 exports.handler = list;

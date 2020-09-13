@@ -21,7 +21,7 @@ module.exports = class ModelListRoute {
       // filter results based on the type provided
       if (this.listType === 'words') {
         this.results = this.results.filter(result => result.name);
-      } else if (this.listType === 'madlib') {
+      } else if (this.listType === 'madlibs') {
         this.results = this.results.filter(result => result.title);
       }
 
