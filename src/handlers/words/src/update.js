@@ -17,7 +17,6 @@ const handleId = (word, id) => {
 	}
 };
 
-
 const checkForUnsupportedUpdate = async (word, id) => {
 	const isIdIncorrect = handleId(word, id);
 	if (isIdIncorrect) return isIdIncorrect;
