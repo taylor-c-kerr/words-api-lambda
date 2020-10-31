@@ -4,6 +4,12 @@ const filterName = (results, name) => {
 	return results.filter(result => result.name === name)
 };
 const filterList = (results, listValue) => {
+	if (listValue === 'random') {
+		const min = 0;
+		const max = results.length - 1;
+		const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+		return results[randomNumber];
+	}
 	return results.filter(result => result && result.category && result.category.includes(listValue))
 };
 
